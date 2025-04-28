@@ -1,38 +1,44 @@
+# d:\Microsoft VS Code\test\web-flashcard\backend\app.py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate # <<< THÊM DÒNG NÀY
 from flask_cors import CORS
 from config import Config
 import os
 
 # Khởi tạo các extension nhưng chưa cấu hình ứng dụng cụ thể
 db = SQLAlchemy()
+migrate = Migrate() # <<< THÊM DÒNG NÀY
 
 def create_app(config_class=Config):
-    app = Flask(__name__, instance_relative_config=True) # instance_relative_config=True để tìm file config trong thư mục instance nếu có
+    app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
 
-    # Đảm bảo thư mục instance tồn tại
     try:
         os.makedirs(app.instance_path)
     except OSError:
-        pass # Bỏ qua nếu thư mục đã tồn tại
+        pass
 
     # Khởi tạo các extension với ứng dụng
     db.init_app(app)
-    CORS(app) # Cho phép CORS cho tất cả các route
+    migrate.init_app(app, db) # <<< THÊM DÒNG NÀY (khởi tạo migrate)
+    CORS(app)
 
-    # Import và đăng ký các blueprint (nhóm các route)
-    # Chúng ta sẽ tạo file routes.py sau
     from routes import api_bp
-    app.register_blueprint(api_bp, url_prefix='/api') # Tất cả API sẽ có tiền tố /api
+    app.register_blueprint(api_bp, url_prefix='/api')
 
-    # Tạo database nếu chưa tồn tại (chỉ chạy lần đầu hoặc khi model thay đổi)
-    with app.app_context():
-        # Import models ở đây để tránh lỗi circular import
-        from models import Folder, Group, Card, MindmapData
-        db.create_all()
-        print(f"Database path: {app.config['SQLALCHEMY_DATABASE_URI']}")
-        print("Database tables created or already exist.")
+    # --- QUAN TRỌNG: Xử lý db.create_all() ---
+    # Khi dùng Flask-Migrate, bạn thường không gọi db.create_all() trực tiếp ở đây nữa.
+    # Việc tạo và cập nhật bảng sẽ do lệnh `flask db upgrade` đảm nhiệm.
+    # Bạn có thể xóa hoặc comment out khối 'with app.app_context()' này
+    # nếu bạn hoàn toàn dựa vào migrations.
+    # Hoặc, giữ lại để đảm bảo DB được tạo lần đầu nếu chưa có migrations folder,
+    # nhưng hãy cẩn thận vì nó không quản lý thay đổi schema.
+    # with app.app_context():
+    #     from models import Folder, Group, Card, MindmapData # Import trong context
+    #     # db.create_all() # <<< CÓ THỂ COMMENT HOẶC XÓA
+    #     print(f"Database path: {app.config['SQLALCHEMY_DATABASE_URI']}")
+    #     # print("Database tables checked/created by create_all (if uncommented).")
 
 
     @app.route('/')
@@ -41,11 +47,8 @@ def create_app(config_class=Config):
 
     return app
 
-# Tạo ứng dụng
 app = create_app()
 
-# Chạy ứng dụng (chỉ khi file này được thực thi trực tiếp)
 if __name__ == '__main__':
-    # debug=True sẽ tự động reload server khi có thay đổi code
-    # Không dùng debug=True trong môi trường production!
-    app.run(debug=True, port=5000) # Chạy trên cổng 5000
+    app.run(debug=True, port=5000)
+
