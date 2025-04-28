@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -841,4 +842,849 @@
 
 <!-- 
 .\venv\Scripts\activate 
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flashcard Cá Nhân</title>
+    <style>
+        /* --- Base Styles & Variables --- */
+        :root {
+            --bg-color: #f8f9fa; /* Nền sáng hơn một chút */
+            --text-color: #212529; /* Text tối hơn một chút */
+            --card-bg: #ffffff;
+            --border-color: #dee2e6; /* Border nhạt hơn */
+            --input-bg: #ffffff;
+            --input-text: #495057;
+            --input-border: #ced4da;
+            --input-focus-border: #86b7fe;
+            --input-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+
+            --primary-btn-bg: #0d6efd;
+            --primary-btn-hover-bg: #0b5ed7;
+            --primary-btn-text: #ffffff;
+
+            --secondary-btn-bg: #6c757d;
+            --secondary-btn-hover-bg: #5c636a;
+            --secondary-btn-text: #ffffff;
+
+            --danger-btn-bg: #dc3545;
+            --danger-btn-hover-bg: #bb2d3b;
+            --danger-btn-text: #ffffff;
+
+            --warning-btn-bg: #ffc107;
+            --warning-btn-hover-bg: #ffca2c;
+            --warning-btn-text: #000;
+
+            --success-btn-bg: #198754;
+            --success-btn-hover-bg: #157347;
+            --success-btn-text: #ffffff;
+
+            --shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
+            --shadow-md: 0 .5rem 1rem rgba(0, 0, 0, .15);
+
+            --moon-color: #ffffff; /* Thêm biến màu mặt trăng */
+            --handle-dark-bg: transparent; /* Nền handle trong dark mode */
+            --star-size-light: 2px;
+            --star-size-dark: 4px; /* Kích thước sao lớn hơn trong dark mode */
+            --star-shadow-dark: 0 0 5px rgba(255, 255, 255, 0.7); /* Shadow sao rõ hơn */
+        }
+
+        .dark-mode {
+            --bg-color: #212529;
+            --text-color: #dee2e6;
+            --card-bg: #343a40;
+            --border-color: #495057;
+            --input-bg: #343a40;
+            --input-text: #dee2e6;
+            --input-border: #6c757d;
+            --input-focus-border: #5b99e4;
+            --input-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.35);
+
+            --primary-btn-bg: #0d6efd;
+            --primary-btn-hover-bg: #3b82f6;
+            --secondary-btn-bg: #6c757d;
+            --secondary-btn-hover-bg: #858c93;
+            --danger-btn-bg: #dc3545;
+            --danger-btn-hover-bg: #e45d6a;
+            --warning-btn-bg: #ffc107;
+            --warning-btn-hover-bg: #ffd041;
+            --success-btn-bg: #198754;
+            --success-btn-hover-bg: #20a768;
+            --markmap-text-color: var(--text-color);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 700px; /* Tăng chiều rộng tối đa một chút */
+            margin: 30px auto; /* Tăng margin trên dưới */
+            padding: 20px; /* Tăng padding */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6; /* Cải thiện khả năng đọc */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--text-color);
+        }
+
+        /* --- Theme Toggle Switch --- */
+        .theme-toggle {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #87CEEB; /* Màu trời xanh ban ngày */
+            transition: background-color .4s;
+            overflow: hidden;
+            background-color: #FFD700; /* Màu vàng mặt trời (light) */
+        }
+
+        /* Style cho nút tròn di chuyển mới (.handle) */
+        .slider .handle {
+            position: absolute;
+            content: "";
+            height: 22px; /* Kích thước nút tròn */
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #FFD700; /* Màu vàng mặt trời (light) */
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.7); /* Hào quang nhẹ */
+            transition: transform .4s, background-color .4s, box-shadow .4s;
+            border-radius: 50%; /* Bo tròn nút */
+            z-index: 2; /* Đảm bảo handle trên stars */
+            display: flex; /* Để căn giữa icon bên trong */
+            justify-content: center; /* Căn ngang icon */
+            align-items: center; /* Căn dọc icon */
+            overflow: hidden; /* Ẩn phần icon thừa nếu cần */
+            background-color: #FFD700; /* Màu vàng mặt trời (light) */
+        }
+
+
+        input:checked + .slider {
+            background-color: #2c3e50; /* Màu nền trời đêm */
+        }
+
+        /* Di chuyển .handle khi checked */
+        input:checked + .slider .handle {
+            transform: translateX(30px); /* Khoảng cách di chuyển nút tròn */
+            background-color: #f1c40f; /* Màu vàng nhạt hơn cho mặt trăng (dark) */
+            box-shadow: none; /* Ẩn shadow */
+        }
+
+        /* Bo tròn slider ngoài */
+        .slider.round {
+            border-radius: 30px;
+        }
+
+        /* --- Icons (Bên trong .handle) --- */
+        .handle .icon {
+            position: absolute; /* Vẫn là absolute để có thể chồng lên nhau */
+            font-size: 16px;
+            transition: opacity 0.4s ease; /* Chỉ cần transition opacity */
+        }
+
+        .handle .sun {
+            opacity: 1; /* Hiện ở chế độ sáng (mặc định) */
+            color: #f39c12;
+            animation: spin 10s linear infinite; /* Giữ animation quay */
+        }
+
+        .handle .moon {
+            opacity: 0;
+            color: var(--moon-color);
+        }
+
+        /* Khi switch được check (dark mode) */
+        input:checked + .slider .handle .sun {
+            opacity: 0; /* Ẩn mặt trời */
+            animation-play-state: paused; /* Dừng quay mặt trời */
+        }
+
+        input:checked + .slider .handle .moon {
+            opacity: 1; /* Hiện mặt trăng */
+        }
+
+        /* --- Stars (Không đổi) --- */
+        .slider .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.4s ease 0.2s;
+            pointer-events: none;
+            z-index: 0; /* Nằm dưới cùng */
+        }
+
+        .slider .star {
+            position: absolute;
+            width: var(--star-size-light); /* Kích thước sao mặc định (light) */
+            height: var(--star-size-light);
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 3px white;
+            animation: twinkle 1.5s infinite alternate ease-in-out;
+            transition: width 0.4s ease, height 0.4s ease, box-shadow 0.4s ease; /* Thêm transition */
+        }
+        .slider .star:nth-child(1) { top: 20%; left: 60%; animation-delay: 0.1s; }
+        .slider .star:nth-child(2) { top: 40%; left: 80%; animation-delay: 0.5s; }
+        .slider .star:nth-child(3) { top: 70%; left: 75%; animation-delay: 0.9s; }
+        .slider .star:nth-child(4) { top: 50%; left: 90%; animation-delay: 0.3s; }
+
+        input:checked + .slider .stars {
+            width: var(--star-size-dark);
+            height: var(--star-size-dark);
+            box-shadow: var(--star-shadow-dark);
+        }
+
+        input:checked + .slider .stars {
+            opacity: 1;
+        }
+
+
+        /* Keyframes cho animation (Không đổi) */
+        @keyframes twinkle {
+            from { opacity: 0.2; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Sửa lại keyframes spin cho phù hợp khi icon không cần translateY */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        /* --- End Theme Toggle Switch --- */
+
+
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 26px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* --- Input Fields & Select --- */
+        input[type="text"], select {
+            display: block; /* Hiển thị trên một dòng riêng */
+            width: 100%; /* Chiếm toàn bộ chiều rộng có sẵn */
+            padding: 10px 12px; /* Tăng padding */
+            margin-bottom: 10px; /* Khoảng cách dưới */
+            font-size: 1rem;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--input-border);
+            border-radius: 6px; /* Bo góc nhiều hơn */
+            box-sizing: border-box; /* Quan trọng để padding không làm tăng kích thước */
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--input-focus-border);
+            outline: 0;
+            box-shadow: var(--input-focus-shadow);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        /* --- Buttons --- */
+        button {
+            padding: 10px 18px; /* Tăng padding */
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--button-text); /* Sẽ bị ghi đè bởi class cụ thể */
+            background-color: var(--secondary-btn-bg); /* Màu mặc định */
+            border: none;
+            border-radius: 6px; /* Đồng bộ bo góc */
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-right: 5px; /* Khoảng cách nhỏ giữa các nút */
+            margin-bottom: 5px; /* Khoảng cách khi nút xuống dòng */
+        }
+
+        button:hover {
+            background-color: var(--secondary-btn-hover-bg); /* Hover mặc định */
+            /* transform: translateY(-1px); /* Hiệu ứng nhấc lên nhẹ */
+        }
+
+        button:active {
+            transform: scale(0.98); /* Hiệu ứng nhấn xuống */
+        }
+
+        /* Button Specific Colors */
+        .group-management button:first-of-type, /* Nút Tạo nhóm */
+        .add-card button, /* Nút Thêm thẻ */
+        #quiz-check-btn { /* Nút Kiểm tra/Tiếp theo/Thử lại */
+            background-color: var(--primary-btn-bg);
+            color: var(--primary-btn-text);
+        }
+        .group-management button:first-of-type:hover,
+        .add-card button:hover,
+        #quiz-check-btn:hover {
+            background-color: var(--primary-btn-hover-bg);
+        }
+
+        .delete-group-btn,
+        .flashcard button { /* Nút xóa thẻ */
+            background-color: var(--danger-btn-bg);
+            color: var(--danger-btn-text);
+            padding: 6px 12px; /* Nút xóa nhỏ hơn */
+            font-size: 0.85rem;
+        }
+        .delete-group-btn:hover,
+        .flashcard button:hover {
+            background-color: var(--danger-btn-hover-bg);
+        }
+
+        .pause-button {
+            background-color: var(--warning-btn-bg);
+            color: var(--warning-btn-text);
+        }
+        .pause-button:hover {
+            background-color: var(--warning-btn-hover-bg);
+        }
+
+        .resume-button,
+        #start-quiz-btn { /* Nút Bắt đầu/Tiếp tục Quiz */
+            background-color: var(--success-btn-bg);
+            color: var(--success-btn-text);
+        }
+        .resume-button:hover,
+        #start-quiz-btn:hover {
+            background-color: var(--success-btn-hover-bg);
+        }
+
+        /* --- Layout Sections --- */
+        .group-management {
+            margin-bottom: 30px; /* Tăng khoảng cách */
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-bg); /* Nền nhẹ */
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-wrap: wrap; /* Cho phép xuống dòng */
+            gap: 10px; /* Khoảng cách giữa các item */
+            align-items: center; /* Căn giữa các item */
+        }
+        /* Điều chỉnh input và select trong group management */
+        .group-management input[type="text"],
+        .group-management select {
+            flex: 1 1 180px; /* Cho phép co giãn, cơ sở 180px */
+            margin-bottom: 0; /* Bỏ margin bottom vì đã có gap */
+            width: auto; /* Để flex quản lý */
+        }
+        .group-management button {
+            flex-shrink: 0; /* Không co lại */
+            margin-bottom: 0;
+        }
+
+        .add-card {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+        }
+        .add-card input[type="text"] {
+            margin-bottom: 15px; /* Khoảng cách giữa 2 input */
+        }
+        .add-card button {
+            width: 100%; /* Nút thêm thẻ chiếm hết chiều rộng */
+        }
+
+        #quiz-controls {
+            text-align: center; /* Căn giữa nút Start/Resume */
+            margin-bottom: 20px;
+        }
+        #quiz-controls button {
+            padding: 12px 25px; /* Nút to hơn */
+            font-size: 1.1rem;
+        }
+
+        /* --- Flashcard Styling --- */
+        #flashcards {
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px 20px; /* Tăng padding */
+            margin-bottom: 15px; /* Khoảng cách giữa các thẻ */
+            border-radius: 8px; /* Đồng bộ bo góc */
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            word-wrap: break-word;
+            position: relative; /* Để định vị nút xóa */
+        }
+
+        .flashcard:hover {
+            box-shadow: var(--shadow-md);
+            /* transform: translateY(-2px); */ /* Hiệu ứng nổi lên nhẹ khi hover */
+        }
+
+        .flashcard strong {
+            margin-right: 5px;
+            color: var(--text-color);
+        }
+
+        .flashcard input[type="text"] {
+            width: calc(100% - 30px); /* Trừ đi padding của thẻ */
+            margin: 5px 0 10px 0; /* Khoảng cách trên dưới */
+            padding: 6px 8px; /* Padding nhỏ hơn cho input trong thẻ */
+            font-size: 0.95rem;
+            background-color: var(--input-bg); /* Đảm bảo nền input đúng */
+            color: var(--input-text);
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+        }
+        .flashcard input[type="text"]:focus {
+            box-shadow: none; /* Bỏ shadow khi focus input trong thẻ */
+            border-color: var(--input-focus-border);
+        }
+
+        .flashcard .answer-display {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color); /* Phân cách câu trả lời */
+        }
+
+        .flashcard button { /* Nút xóa thẻ */
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0.7; /* Hơi mờ đi */
+            transition: opacity 0.2s ease;
+        }
+        .flashcard:hover button {
+            opacity: 1; /* Hiện rõ khi hover thẻ */
+        }
+
+        .hidden {
+            display: none !important; /* Dùng !important để đảm bảo ghi đè */
+        }
+
+        /* --- Quiz Container --- */
+        #quiz-container {
+            margin-top: 30px;
+            padding: 25px; /* Tăng padding */
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md); /* Shadow rõ hơn cho quiz */
+        }
+
+        #quiz-question {
+            font-size: 1.3rem; /* Câu hỏi to hơn */
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        #quiz-answer {
+            width: calc(100% - 24px); /* Chiếm gần hết chiều rộng */
+            padding: 10px 12px;
+            margin: 15px 0;
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        #quiz-answer:focus {
+            border-color: var(--input-focus-border);
+            outline: 0;
+            box-shadow: var(--input-focus-shadow);
+        }
+
+        #quiz-feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            min-height: 50px; /* Chiều cao tối thiểu để tránh nhảy layout */
+            transition: background-color 0.3s ease; /* Transition cho feedback */
+        }
+
+        #quiz-score {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* Quiz Feedback Colors */
+        .correct {
+            color: var(--success-btn-bg); /* Màu xanh lá */
+            font-weight: bold;
+        }
+
+        .wrong {
+            color: var(--danger-btn-bg); /* Màu đỏ */
+            font-weight: bold;
+        }
+        #quiz-feedback .wrong + div { /* Các dòng dưới chữ "Sai rồi" */
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+        #quiz-feedback .wrong + div span[style*="color: red"] { /* Từ đúng màu đỏ */
+            background-color: rgba(220, 53, 69, 0.1); /* Nền đỏ nhạt */
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+        #quiz-feedback .wrong + div s[style*="color: grey"] { /* Từ sai gạch ngang */
+            opacity: 0.7;
+        }
+
+
+        /* --- Animations (Giữ nguyên hoặc tinh chỉnh nếu cần) --- */
+        @keyframes correct-pulse {
+            0% { transform: scale(1); background-color: rgba(25, 135, 84, 0.1); } /* Nền xanh nhạt */
+            50% { transform: scale(1.02); background-color: rgba(25, 135, 84, 0.2); }
+            100% { transform: scale(1); background-color: rgba(25, 135, 84, 0.1); }
+        }
+
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+
+        .animate-correct {
+            animation: correct-pulse 0.6s ease-in-out;
+            background-color: rgba(25, 135, 84, 0.1); /* Nền xanh nhạt khi đúng */
+        }
+
+        .animate-wrong {
+            /* Animation sẽ áp dụng cho span .wrong bên trong #quiz-feedback */
+            animation: wrong-shake 0.5s ease-in-out;
+            /* Nền đỏ cho toàn bộ feedback khi sai */
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        /* Loại bỏ animation cũ trên #quiz-feedback trực tiếp */
+        /* #quiz-feedback.animate-wrong { ... } */
+
+        /* Áp dụng animation rung lắc cho span .wrong */
+        #quiz-feedback span.wrong.animate-wrong {
+            display: inline-block; /* Cần thiết để transform hoạt động */
+            animation: wrong-shake 0.5s ease-in-out;
+        }
+
+        /* --- Responsive (Ví dụ đơn giản) --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+                margin: 15px auto;
+            }
+            .group-management {
+                flex-direction: column; /* Xếp chồng lên nhau trên màn hình nhỏ */
+                align-items: stretch; /* Kéo dài các item */
+            }
+            .group-management input[type="text"],
+            .group-management select,
+            .group-management button {
+                width: 100%; /* Chiếm hết chiều rộng */
+                margin-right: 0;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            #quiz-answer {
+                width: calc(100% - 20px); /* Điều chỉnh lại */
+            }
+        }
+
+        button.loading {
+            position: relative;
+            color: transparent !important; /* Ẩn text gốc */
+            pointer-events: none; /* Vô hiệu hóa click khi đang load */
+        }
+        
+        button.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px; /* Kích thước spinner */
+            height: 16px;
+            margin-top: -8px;
+            margin-left: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.5); /* Màu viền spinner */
+            border-top-color: #ffffff; /* Màu phần quay của spinner */
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        /* Giữ lại animation spin bạn đã có hoặc dùng cái này */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .folder-item .child-groups {
+            display: none; /* Ẩn nhóm con mặc định */
+            margin-left: 20px; /* Thụt lề cho nhóm con */
+            padding-left: 15px;
+            border-left: 1px dashed var(--border-color);
+        }
+        .folder-item.expanded .child-groups {
+            display: block; /* Hiện nhóm con khi thư mục expanded */
+        }
+        .folder-item > .folder-header { /* Header của thư mục để click */
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .folder-item > .folder-header:hover {
+            background-color: rgba(0,0,0,0.05); /* Hiệu ứng hover nhẹ */
+        }
+        .dark-mode .folder-item > .folder-header:hover {
+             background-color: rgba(255,255,255,0.1);
+        }
+        .folder-toggle-icon { /* Icon mũi tên */
+            display: inline-block;
+            transition: transform 0.2s ease;
+            width: 1em; /* Đảm bảo icon chiếm không gian */
+            text-align: center;
+        }
+        .folder-item.expanded .folder-toggle-icon {
+            transform: rotate(90deg);
+        }
+        /* CSS cho group-item giữ nguyên hoặc điều chỉnh nếu cần */
+        .group-item {
+            padding: 8px 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 3px 0;
+        }
+        .group-item:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+         .dark-mode .group-item:hover {
+            background-color: rgba(13, 110, 253, 0.2);
+        }
+
+
+        .mindmap-editor-container {
+            display: flex; /* Giữ nguyên display: flex */
+            flex-direction: column; /* <<< THAY ĐỔI TỪ 'row' SANG 'column' */
+            gap: 20px; /* Khoảng cách này giờ sẽ là khoảng cách dọc */
+            margin-top: 15px;
+            /* align-items: flex-start; */ /* Có thể bỏ hoặc đổi thành align-items: stretch; nếu muốn các mục con rộng bằng container */
+            align-items: stretch; /* Thử stretch để các khu vực con rộng bằng container */
+        }
+  
+          /* Khu vực soạn thảo Markdown */
+        .markdown-input-area {
+            /* flex: 1; */ /* Không cần thiết khi xếp dọc, trừ khi muốn kiểm soát chiều cao */
+            width: 100%; /* Đảm bảo chiếm đủ chiều rộng */
+            display: flex;
+            flex-direction: column;
+        }
+  
+          /* Khu vực hiển thị Mindmap SVG */
+        .mindmap-display-area {
+            /* flex: 1; */ /* Không cần thiết khi xếp dọc, trừ khi muốn kiểm soát chiều cao */
+            width: 100%; /* Đảm bảo chiếm đủ chiều rộng */
+            display: flex;
+            flex-direction: column;
+        }
+  
+          /* Đảm bảo textarea và SVG chiếm hết không gian còn lại trong khu vực của chúng */
+        .markdown-input-area textarea {
+              /* flex-grow: 1; */ /* Vẫn giữ để textarea co giãn */
+            min-height: 200px; /* Có thể đặt chiều cao tối thiểu cho textarea */
+            resize: vertical;
+        }
+  
+        .mindmap-display-area #mindmap-svg {
+              /* flex-grow: 1; */ /* Vẫn giữ để SVG co giãn */
+            width: 100%;
+            min-height: 300px; /* Giữ nguyên hoặc điều chỉnh */
+              /* border: 1px solid #ccc; */ /* Đã có inline style, nhưng có thể đặt ở đây */
+          }
+  
+          /* Điều chỉnh nhỏ cho các nút và text nếu cần */
+        .markdown-input-area button {
+            margin-top: 10px;
+        }
+        .markdown-input-area p {
+            margin-top: 10px;
+        }
+
+        .markmap {
+            color: var(--markmap-text-color); /* Dòng này phải tồn tại */
+        }
+
+        body.dark-mode .markmap {
+            --markmap-text-color: var(--text-color);
+        }
+        
+
+    </style>
+</head>
+<body>
+    <!-- Toggle theme switch -->
+    <div class="theme-toggle">
+        <span>Chế độ tối</span>
+        <label class="switch">
+            <input type="checkbox" id="theme-switch">
+            <span class="slider round">
+                <!-- Nút tròn di chuyển (thay thế cho :before) -->
+                <span class="handle">
+                    <span class="icon sun">☀️</span>
+                    <span class="icon moon">🌙</span>
+                </span>
+                <!-- Các ngôi sao vẫn nằm trong slider -->
+                <span class="stars">
+                    <span class="star"></span>
+                    <span class="star"></span>
+                    <span class="star"></span>
+                    <span class="star"></span>
+                </span>
+            </span>
+        </label>
+    </div>    
+        <main>
+            <div id="mindmap-view" class="view hidden">
+                <button id="back-to-flashcards-btn">⬅️ Quay lại Flashcards</button>
+                <h2 id="mindmap-view-title">Mind Map: Tên Nhóm</h2>
+
+                <div class="mindmap-editor-container">
+                    <div class="markdown-input-area">
+                        <h3>Soạn thảo Markdown</h3>
+                        <textarea id="mindmap-markdown-input" rows="15" placeholder="Nhập nội dung mind map bằng Markdown ở đây..."></textarea>
+                        <button id="save-mindmap-btn">💾 Lưu Mind Map</button>
+                        <p><small><i>Tip: Dùng dấu # cho tiêu đề chính, - hoặc * cho các nhánh. Thụt lề để tạo nhánh con.</i></small></p>
+                    </div>
+                    <div class="mindmap-display-area">
+                        <h3>Xem trước Mind Map</h3>
+                        <svg id="mindmap-svg" style="width: 100%; height: 400px; border: 1px solid #ccc;"></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KHUNG NHÌN 1: Quản lý Nhóm/Thư mục (Hiển thị ban đầu) -->
+            <div id="hierarchy-view" class="view">
+                <h2>Thư mục và Nhóm bài học</h2>
+                <div id="hierarchy-container">
+                    <!-- Cấu trúc cây sẽ được render vào đây bằng JavaScript -->
+                </div>
+    
+                <div class="group-management-controls">
+                    <h3>Quản lý Mục</h3>
+                    <input type="text" id="new-item-name" placeholder="Tên thư mục/nhóm mới">
+                    <select id="new-item-type">
+                        <option value="folder">Tạo Thư mục</option>
+                        <option value="group">Tạo Nhóm bài học</option>
+                    </select>
+                    <select id="parent-folder-select" style="display: none;">
+                        <option value="">-- Chọn thư mục cha --</option>
+                    </select>
+                    <!-- Ví dụ nút đúng -->
+                    <button id="add-item-btn">Tạo mới</button>
+                    <hr>
+                    <input type="text" id="rename-item" placeholder="Tên mới cho mục đã chọn">
+                    <button onclick="renameCurrentItem()">Đổi tên</button>
+                    <button onclick="deleteCurrentItem()" class="danger">Xóa mục đã chọn</button>
+                     <hr>
+                     <select id="move-target-folder-select" disabled>
+                         <option value="">-- Di chuyển đến thư mục --</option>
+                         <option value="root">-- Di chuyển ra ngoài --</option>
+                     </select>
+                     <button id="move-item-btn" onclick="moveCurrentItem()" disabled>Di chuyển</button>
+                </div>
+            </div>            
+    
+            <!-- KHUNG NHÌN 2: Flashcards và Quiz (Ẩn ban đầu) -->
+            <div id="flashcard-view" class="hidden">
+                <button id="back-to-groups-btn" onclick="showGroupManagementView()">⬅️ Quay lại danh sách</button>
+                <h2 id="flashcard-view-title">Flashcards</h2> <!-- Tiêu đề động -->
+    
+                <!-- Khu vực thêm thẻ -->
+                <div class="add-card">
+                    <h3>Thêm thẻ mới</h3>
+                    <input type="text" id="question" placeholder="Câu hỏi (Mặt trước)">
+                    <input type="text" id="answer" placeholder="Câu trả lời (Mặt sau)">
+                    <button onclick="addCard()">Thêm thẻ</button>
+                </div>
+    
+                <!-- Khu vực hiển thị flashcards -->
+                <div id="flashcards">
+                    <!-- Flashcards sẽ được render ở đây -->
+                </div>
+    
+                <!-- Khu vực điều khiển Quiz -->
+                <div id="quiz-controls">
+                    <button id="start-quiz-btn" onclick="startQuiz()">Bắt đầu Quiz</button>
+                    <!-- Nút Resume sẽ được thêm vào đây bằng JS nếu cần -->
+                </div>
+    
+                <!-- Khu vực Quiz (Ẩn ban đầu trong view này) -->
+                <div id="quiz-container" class="hidden">
+                     <h3>Quiz Time!</h3>
+                     <div id="quiz-score"></div>
+                     <div id="quiz-question"></div>
+                     <input type="text" id="quiz-answer" placeholder="Nhập câu trả lời của bạn">
+                     <button id="quiz-check-btn" onclick="checkAnswer()">Kiểm tra</button>
+                     <button id="quiz-pause-btn" onclick="pauseQuiz()">Tạm dừng Quiz</button>
+                     <div id="quiz-feedback"></div>
+                </div>
+            </div>
+        </main>
+        
+        <select id="group-select">
+            <!-- Các thẻ <option> sẽ được thêm vào đây bởi JavaScript -->
+        </select>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@6"></script> <!-- Markmap cần D3 -->
+    <script src="https://cdn.jsdelivr.net/npm/markmap-lib"></script> <!-- Định nghĩa markmapLib -->
+    <script src="https://cdn.jsdelivr.net/npm/markmap-view"></script> <!-- Định nghĩa markmap -->
+
+        <!-- Các file Script giữ nguyên ở cuối body -->
+        <script src="db.js"></script>
+        <script src="ui.js"></script>
+        <script src="app.js"></script>    
+</body>
+</html>
+
+<!-- 
+.\venv\Scripts\activate 
+>>>>>>> 51f692d4c1c3251ed714808cee191bfd31ea8c85
 --> 
