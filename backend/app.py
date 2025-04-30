@@ -8,7 +8,7 @@ import os
 
 # Khởi tạo các extension nhưng chưa cấu hình ứng dụng cụ thể
 db = SQLAlchemy()
-migrate = Migrate() # <<< THÊM DÒNG NÀY
+migrate = Migrate() 
 
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
@@ -21,7 +21,7 @@ def create_app(config_class=Config):
 
     # Khởi tạo các extension với ứng dụng
     db.init_app(app)
-    migrate.init_app(app, db) # <<< THÊM DÒNG NÀY (khởi tạo migrate)
+    migrate.init_app(app, db) #(khởi tạo migrate)
     CORS(app)
 
     from routes import api_bp
